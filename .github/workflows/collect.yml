@@ -38,6 +38,6 @@ jobs:
         run: |
           cd work && rm -f old.json
           git init -q -b stats
-          git -c user.name="BestWays collecteur" -c user.email="actions@users.noreply.github.com" add stats.json
+          git -c user.name="BestWays collecteur" -c user.email="actions@users.noreply.github.com" add stats.json summary.json
           git -c user.name="BestWays collecteur" -c user.email="actions@users.noreply.github.com" commit -q -m "Retards au $(date -u +%FT%H:%MZ)"
           git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" stats

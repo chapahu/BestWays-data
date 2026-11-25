@@ -67,5 +67,7 @@ const tail = (ref) => String(ref || '').split(':').filter(Boolean).pop() || '';
     stats.summary[id] = { mean: +(L.sum / L.n / 60).toFixed(2), p2: +(L.o2 / L.n).toFixed(3), p5: +(L.o5 / L.n).toFixed(3), n: L.n, cancel: +(L.cx / (L.n + L.cx)).toFixed(3), mode: L.mode };
   }
   fs.writeFileSync(OUT, JSON.stringify(stats));
+  // petit fichier pour l'appli (quelques dizaines de Ko)
+  fs.writeFileSync(require('path').join(require('path').dirname(OUT), 'summary.json'), JSON.stringify({ updated: stats.updated, since: stats.since, runs: stats.runs, samples: stats.samples, lines: stats.summary }));
   console.log(`+${added} passages (total ${stats.samples}, ${stats.runs} relevés, ${Object.keys(stats.summary).length} lignes avec historique)`);
 })().catch((e) => { console.error(e); process.exit(1); });
