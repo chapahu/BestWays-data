@@ -1,0 +1,43 @@
+name: Collecteur de retards
+
+# Toutes les 10 minutes : relevé des retards en direct (PRIM) cumulé dans la branche « stats ».
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Récupérer l'historique
+        run: |
+          mkdir -p work
+          git fetch -q origin stats 2>/dev/null && git show origin/stats:stats.json > work/old.json 2>/dev/null || echo "Pas encore d'historique"
+
+      - name: Relever les retards
+        env:
+          PRIM_API_KEY: ${{ secrets.PRIM_API_KEY }}
+        run: node collector/collect.js work/old.json work/stats.json
+
+      - name: Publier (un seul commit, remplacé à chaque fois)
+        run: |
+          cd work && rm -f old.json
+          git init -q -b stats
+          git -c user.name="BestWays collecteur" -c user.email="actions@users.noreply.github.com" add stats.json
+          git -c user.name="BestWays collecteur" -c user.email="actions@users.noreply.github.com" commit -q -m "Retards au $(date -u +%FT%H:%MZ)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" stats
