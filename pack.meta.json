@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-11-27T12:10:35.948Z",
+  "startDate": "20261126",
+  "days": 40,
+  "counts": {
+    "stops": 35505,
+    "patterns": 13537,
+    "trips": 516752,
+    "profiles": 110775,
+    "transfers": 361378
+  },
+  "rawBytes": 48291748,
+  "gzBytes": 7298564
+}
